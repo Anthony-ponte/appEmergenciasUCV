@@ -35,7 +35,7 @@ CREATE TABLE `atencion` (
   PRIMARY KEY (`id`),
   KEY `emergencia_id` (`emergencia_id`),
   KEY `doctor_id` (`doctor_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,7 @@ CREATE TABLE `atencion` (
 
 LOCK TABLES `atencion` WRITE;
 /*!40000 ALTER TABLE `atencion` DISABLE KEYS */;
-INSERT INTO `atencion` VALUES (1,3,3,'2025-06-04 03:16:36','',1,'se traslado al ospital loayssa'),(2,3,2,'2025-06-21 02:28:55','sdsdsssdssdsd',0,''),(3,3,1,'2025-07-01 03:39:49','sdsdsdsds',1,'prueba del destino'),(4,3,2,'2025-07-01 03:40:39','Se asigno a la doctora maria quen se encarga de validar el pulso',1,'prueba del destino'),(5,4,1,'2025-07-01 04:54:38','sdsdsds',1,'prueba del destino');
+INSERT INTO `atencion` VALUES (1,3,3,'2025-06-04 03:16:36','',1,'se traslado al ospital loayssa'),(2,3,2,'2025-06-21 02:28:55','sdsdsssdssdsd',0,''),(3,3,1,'2025-07-01 03:39:49','sdsdsdsds',1,'prueba del destino'),(4,3,2,'2025-07-01 03:40:39','Se asigno a la doctora maria quen se encarga de validar el pulso',1,'prueba del destino'),(5,4,1,'2025-07-01 04:54:38','sdsdsds',1,'prueba del destino'),(6,5,1,'2025-07-01 16:27:04','se asigno un medico por turno',1,'prueba del destino'),(7,5,1,'2025-07-01 16:27:42','se asigno un medico por turno',1,'prueba del destino');
 /*!40000 ALTER TABLE `atencion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,7 +104,7 @@ CREATE TABLE `emergencias` (
 
 LOCK TABLES `emergencias` WRITE;
 /*!40000 ALTER TABLE `emergencias` DISABLE KEYS */;
-INSERT INTO `emergencias` VALUES (5,'dfdfd',4,'dfdfd','dfdfd','2025-07-01 04:57:22',1),(6,'sdssds',6,'sdsds','sdsdsds','2025-07-01 04:58:15',1),(4,'Andres antony ponte trujillo',4,'pabellon 12, piso 3','tubo una crisiis luego de observar una pelea','2025-06-21 02:23:52',1);
+INSERT INTO `emergencias` VALUES (5,'dfdfd',4,'dfdfd','dfdfd','2025-07-01 04:57:22',2),(6,'sdssds',6,'sdsds','sdsdsds','2025-07-01 04:58:15',3),(4,'Andres antony ponte trujillo',4,'pabellon 12, piso 3','tubo una crisiis luego de observar una pelea','2025-06-21 02:23:52',1);
 /*!40000 ALTER TABLE `emergencias` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,6 +163,36 @@ CREATE TABLE `paciente` (
 LOCK TABLES `paciente` WRITE;
 /*!40000 ALTER TABLE `paciente` DISABLE KEYS */;
 /*!40000 ALTER TABLE `paciente` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `perfiles_usuarios`
+--
+
+DROP TABLE IF EXISTS `perfiles_usuarios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `perfiles_usuarios` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `nacimiento` date DEFAULT NULL,
+  `email` varchar(100) NOT NULL,
+  `contraseña` varchar(100) NOT NULL,
+  `tipo_usuario` varchar(50) NOT NULL,
+  `fecha_registro` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `perfiles_usuarios`
+--
+
+LOCK TABLES `perfiles_usuarios` WRITE;
+/*!40000 ALTER TABLE `perfiles_usuarios` DISABLE KEYS */;
+INSERT INTO `perfiles_usuarios` VALUES (1,'Andres Anthony','2025-12-03','andres@gmail.com','123456','ESTUDIANTE','2025-07-01 15:01:35');
+/*!40000 ALTER TABLE `perfiles_usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -262,6 +292,168 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `reporte_emergencias_por_fecha` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `reporte_emergencias_por_fecha`(
+    IN p_fecha_inicio DATE,
+    IN p_fecha_fin DATE
+)
+BEGIN
+    SELECT 
+        e.id_emergencia,
+        e.nombres_apellidos,
+        e.ubicacion,
+        e.descripcion,
+        te.nombre AS tipo_emergencia,
+        e.fecha_registro,
+        CASE e.estado
+            WHEN 1 THEN 'Pendiente'
+            WHEN 2 THEN 'Atendida'
+            WHEN 3 THEN 'Cancelada'
+            ELSE 'Desconocido'
+        END AS estado
+    FROM emergencias e
+    LEFT JOIN tipo_emergencia te ON e.tipo_emergencia = te.id
+    WHERE DATE(e.fecha_registro) BETWEEN p_fecha_inicio AND p_fecha_fin
+    ORDER BY e.fecha_registro ASC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_detalle_emergencia_por_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_detalle_emergencia_por_id`(IN p_id_emergencia INT)
+BEGIN
+    SELECT 
+        e.id_emergencia,
+        e.nombres_apellidos,
+        e.ubicacion,
+        e.descripcion,
+        te.nombre AS tipo_emergencia,
+        e.fecha_registro
+    FROM emergencias e
+    LEFT JOIN tipo_emergencia te ON e.tipo_emergencia = te.id
+    WHERE e.id_emergencia = p_id_emergencia;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_guardar_atencion` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_guardar_atencion`(
+    IN p_emergencia_id INT,
+    IN p_doctor_id INT,
+    IN p_observaciones TEXT,
+    IN p_traslado BOOLEAN,
+    IN p_destino_traslado VARCHAR(255)
+)
+BEGIN
+    -- Insertar nueva atención
+    INSERT INTO atencion (emergencia_id, doctor_id, observaciones, traslado, destino_traslado)
+    VALUES (p_emergencia_id, p_doctor_id, p_observaciones, p_traslado, p_destino_traslado);
+
+    -- Actualizar estado de la emergencia a 2 (Atendida)
+    UPDATE emergencias
+    SET estado = 2
+    WHERE id_emergencia = p_emergencia_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_guardar_perfil_usuario` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_guardar_perfil_usuario`(
+    IN p_nombre VARCHAR(100),
+    IN p_nacimiento DATE,
+    IN p_email VARCHAR(100),
+    IN p_contraseña VARCHAR(100),
+    IN p_tipo_usuario VARCHAR(50)
+)
+BEGIN
+    -- Validar si el email ya existe
+    IF EXISTS (SELECT 1 FROM perfiles_usuarios WHERE email = p_email) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El correo ya está registrado';
+    ELSE
+        -- Insertar nuevo usuario
+        INSERT INTO perfiles_usuarios(nombre, nacimiento, email, contraseña, tipo_usuario)
+        VALUES (p_nombre, p_nacimiento, p_email, p_contraseña, p_tipo_usuario);
+    END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_historial_atencion_por_emergencia` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_historial_atencion_por_emergencia`(IN p_id_emergencia INT)
+BEGIN
+    SELECT 
+        a.id AS id_atencion,
+        d.nombre AS nombre_doctor,
+        d.apellido AS apellido_doctor,
+        d.especialidad,
+        a.fecha_atencion,
+        a.observaciones,
+        a.traslado,
+        a.destino_traslado
+    FROM atencion a
+    INNER JOIN doctor d ON a.doctor_id = d.id
+    WHERE a.emergencia_id = p_id_emergencia
+    ORDER BY a.fecha_atencion DESC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -272,4 +464,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-01  0:02:53
+-- Dump completed on 2025-07-01 14:07:12
