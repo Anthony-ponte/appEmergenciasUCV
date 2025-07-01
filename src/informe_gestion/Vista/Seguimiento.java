@@ -20,31 +20,8 @@ public class Seguimiento extends javax.swing.JFrame {
 
     public Seguimiento() {
         initComponents();
-        mostrarNombresAleatorios();
+        setLocationRelativeTo(null);
         cargarTablaEmergencias();
-    }
-
-  private void mostrarNombresAleatorios() {
-      List<DoctorEntity> doctores = doctorService.obtenerDoctores();
-
-      if (doctores.size() < 2) {
-          jTextField1.setText("No hay suficientes doctores para mostrar.");
-          return;
-      }
-
-      int i = (int)(Math.random() * doctores.size());
-      int j;
-      do {
-          j = (int)(Math.random() * doctores.size());
-      } while (j == i);
-
-      DoctorEntity doctor1 = doctores.get(i);
-      DoctorEntity doctor2 = doctores.get(j);
-
-      String nombreCompleto1 = doctor1.getNombre() + " " + doctor1.getApellido();
-      String nombreCompleto2 = doctor2.getNombre() + " " + doctor2.getApellido();
-
-      jTextField1.setText(nombreCompleto1 + " y " + nombreCompleto2);
     }
 
     private void cargarTablaEmergencias() {
@@ -135,8 +112,6 @@ public class Seguimiento extends javax.swing.JFrame {
         jbtlDatosSeguimiento = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        btnCancelarEmergencia = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btnIrReportesSegumiento = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -178,22 +153,6 @@ public class Seguimiento extends javax.swing.JFrame {
             }
         });
 
-        jTextField1.setEditable(false);
-        jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PERSONAL MEDICO ", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-
-        btnCancelarEmergencia.setText("CANCELAR EMERGENCIA ");
-        btnCancelarEmergencia.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarEmergenciaActionPerformed(evt);
-            }
-        });
-
         jLabel1.setBackground(new java.awt.Color(204, 0, 0));
         jLabel1.setText("MAPA DE UBICACION DEL PERSONAL MEDICO ");
 
@@ -215,25 +174,19 @@ public class Seguimiento extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addComponent(jLabel2)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 510, Short.MAX_VALUE)
+                        .addGap(9, 9, 9)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 516, Short.MAX_VALUE)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(btnCancelarEmergencia)
-                                .addGap(68, 68, 68)
-                                .addComponent(jButton2))
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton3)
-                        .addGap(80, 80, 80)
+                        .addGap(382, 382, 382)
                         .addComponent(btnIrReportesSegumiento)
                         .addGap(62, 62, 62))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -246,24 +199,24 @@ public class Seguimiento extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(22, 22, 22)
-                        .addComponent(jLabel2)
-                        .addGap(32, 32, 32)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(12, 12, 12)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                        .addComponent(jLabel2))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(btnCancelarEmergencia)
-                    .addComponent(btnIrReportesSegumiento))
-                .addGap(26, 26, 26))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton3)
+                            .addComponent(btnIrReportesSegumiento))
+                        .addGap(26, 26, 26))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -299,43 +252,6 @@ public class Seguimiento extends javax.swing.JFrame {
     this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-       // Lista de nombres
-    String[] nombres = {"DR.Juan Pérez Ramírez",  "Dra. Sofía León Cárdenas"};
-    
-    // Seleccionar 2 índices al azar que no se repitan
-    int i = (int)(Math.random() * nombres.length);
-    int j;
-    do {
-        j = (int)(Math.random() * nombres.length);
-    } while (j == i); // asegurarse de que no se repita
-
-   
-    jTextField1.setText(nombres[i] + " y " + nombres[j]);
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void btnCancelarEmergenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarEmergenciaActionPerformed
-    int filaSeleccionada = jbtlDatosSeguimiento.getSelectedRow();
-
-    if (filaSeleccionada != -1) {
-        int confirmar = javax.swing.JOptionPane.showConfirmDialog(
-                this,
-                "¿Estás seguro de que deseas cancelar esta emergencia?",
-                "Confirmar cancelación",
-                javax.swing.JOptionPane.YES_NO_OPTION
-        );
-
-        if (confirmar == javax.swing.JOptionPane.YES_OPTION) {
-            // Eliminar fila
-            javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jbtlDatosSeguimiento.getModel();
-            modelo.removeRow(filaSeleccionada);
-        }
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Selecciona una fila para cancelar la emergencia.");
-    }
-
-    }//GEN-LAST:event_btnCancelarEmergenciaActionPerformed
-
     public static void main(String args[]) {
        
         /* Create and display the form */
@@ -347,7 +263,6 @@ public class Seguimiento extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelarEmergencia;
     private javax.swing.JButton btnIrReportesSegumiento;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -358,7 +273,6 @@ public class Seguimiento extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable jbtlDatosSeguimiento;
     // End of variables declaration//GEN-END:variables
 }

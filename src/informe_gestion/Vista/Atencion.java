@@ -28,11 +28,13 @@ public class Atencion extends javax.swing.JFrame {
     
     public Atencion( List<EmergenciaEntity> listaEmergencias) {
         initComponents();
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         this.listaEmergencias= listaEmergencias;
         this.atencionService = new AtencionService();
         if (listaEmergencias != null && !listaEmergencias.isEmpty()) {
             EmergenciaEntity emergencia = listaEmergencias.get(0); // o el índice que necesites
-            txtNumEmergencia.setText(String.valueOf(emergencia.getId_emergencia()));
+            txtNumEmergencia.setText(String.valueOf((char) emergencia.getId_emergencia()));
         }
         cargar_doctores();
     }
@@ -92,6 +94,11 @@ public class Atencion extends javax.swing.JFrame {
         });
 
         btnCancelar.setText("CANCELAR");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -188,6 +195,10 @@ public class Atencion extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage());
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments

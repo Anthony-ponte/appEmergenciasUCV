@@ -5,6 +5,7 @@ import informe_gestion.config.ConexionMySQL;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EmergenciaRepository {
 
@@ -129,5 +130,61 @@ public class EmergenciaRepository {
         }
 
         return emergencia;
+    }
+    
+    public Optional<EmergenciaDetalleDTO> obtenerDetalleEmergenciaPorId(int idEmergencia) {
+        String sql = "{CALL sp_detalle_emergencia_por_id(?)}";
+
+        try (Connection conn = ConexionMySQL.getConexion();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setInt(1, idEmergencia);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                EmergenciaDetalleDTO dto = new EmergenciaDetalleDTO();
+                dto.setIdEmergencia(rs.getInt("id_emergencia"));
+                dto.setNombresApellidos(rs.getString("nombres_apellidos"));
+                dto.setUbicacion(rs.getString("ubicacion"));
+                dto.setDescripcion(rs.getString("descripcion"));
+                dto.setTipoEmergencia(rs.getString("tipo_emergencia"));
+                dto.setFechaRegistro(rs.getTimestamp("fecha_registro"));
+                return Optional.of(dto);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
+    }
+    
+    public List<EmergenciaDetalleDTO> listarPorRangoFechas(Date inicio, Date fin) {
+        List<EmergenciaDetalleDTO> lista = new ArrayList<>();
+        String sql = "{CALL reporte_emergencias_por_fecha(?, ?)}";
+
+        try (Connection conn = ConexionMySQL.getConexion();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setDate(1, new java.sql.Date(inicio.getTime()));
+            stmt.setDate(2, new java.sql.Date(fin.getTime()));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    EmergenciaDetalleDTO dto = new EmergenciaDetalleDTO();
+                    dto.setIdEmergencia(rs.getInt("id_emergencia"));
+                    dto.setNombresApellidos(rs.getString("nombres_apellidos"));
+                    dto.setUbicacion(rs.getString("ubicacion"));
+                    dto.setDescripcion(rs.getString("descripcion"));
+                    dto.setTipoEmergencia(rs.getString("tipo_emergencia"));
+                    dto.setFechaRegistro(rs.getTimestamp("fecha_registro"));
+                    lista.add(dto);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al obtener emergencias por fechas: " + e.getMessage(), e);
+        }
+
+        return lista;
     }
 }

@@ -1,6 +1,8 @@
 
 package informe_gestion.Vista;
 
+import informe_gestion.Controller.EmergenciaService;
+import informe_gestion.model.EmergenciaDetalleDTO;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -211,19 +213,52 @@ public class Reportes extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBuscarReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarReportesActionPerformed
-     try (PrintWriter pw = new PrintWriter(new File("reporte.csv"))) {
-        DefaultTableModel model = (DefaultTableModel) jbtlDatosReportes.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            StringBuilder row = new StringBuilder();
-            for (int j = 0; j < model.getColumnCount(); j++) {
-                row.append(model.getValueAt(i, j)).append(",");
-            }
-            pw.println(row);
-        }
-        JOptionPane.showMessageDialog(this, "Reporte descargado correctamente.");
-    } catch (IOException ex) {
-        JOptionPane.showMessageDialog(this, "Error al descargar el reporte.");
-    }  
+        try {
+           // Obtener fechas desde los campos
+           String inicioStr = txtFechaInicio.getText().trim();
+           String finStr = txtFechaFin.getText().trim();
+
+           // Validar campos
+           if (inicioStr.isEmpty() || finStr.isEmpty()) {
+               JOptionPane.showMessageDialog(this, "Debe ingresar ambas fechas.");
+               return;
+           }
+
+           // Convertir String a Date
+           java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+           java.util.Date fechaInicioUtil = sdf.parse(inicioStr);
+            java.util.Date fechaFinUtil = sdf.parse(finStr);
+
+            // Conversión de util.Date a sql.Date
+            java.sql.Date fechaInicio = new java.sql.Date(fechaInicioUtil.getTime());
+            java.sql.Date fechaFin = new java.sql.Date(fechaFinUtil.getTime());
+
+            // Llamar al servicio
+            EmergenciaService servicio = new EmergenciaService();
+            java.util.List<EmergenciaDetalleDTO> lista = servicio.obtenerEmergenciasPorFechas(fechaInicio, fechaFin);
+
+           // Crear modelo de tabla
+           String[] columnas = {"ID", "Nombres", "Ubicación", "Descripción", "Tipo", "Fecha"};
+           DefaultTableModel modelo = new DefaultTableModel(null, columnas);
+
+           for (EmergenciaDetalleDTO dto : lista) {
+               Object[] fila = {
+                   dto.getIdEmergencia(),
+                   dto.getNombresApellidos(),
+                   dto.getUbicacion(),
+                   dto.getDescripcion(),
+                   dto.getTipoEmergencia(),
+                   dto.getFechaRegistro()
+               };
+               modelo.addRow(fila);
+           }
+
+           // Mostrar en la tabla
+           jbtlDatosReportes.setModel(modelo);
+
+       } catch (Exception e) {
+           JOptionPane.showMessageDialog(this, "Error al buscar reportes: " + e.getMessage());
+       }
     }//GEN-LAST:event_btnBuscarReportesActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

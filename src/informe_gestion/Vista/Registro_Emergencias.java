@@ -19,6 +19,7 @@ public class Registro_Emergencias extends javax.swing.JFrame {
         this.tipoEmergenciaService = new TipoEmergenciaService();
 
         initComponents();
+        setLocationRelativeTo(null);
         cargarTiposEmergencia();
         agregarPlaceholder(txtUbicacionRegistro, "Pabellón/Piso/Aula");
 

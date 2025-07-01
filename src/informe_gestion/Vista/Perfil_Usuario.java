@@ -1,10 +1,22 @@
 package informe_gestion.Vista;
 
+import informe_gestion.Controller.PerfilUsuarioService;
+import informe_gestion.model.PerfilUsuarioEntity;
+import util.SesionUsuario;
+
 public class Perfil_Usuario extends javax.swing.JFrame {
+    private PerfilUsuarioService perfilUsuarioService;
     public Perfil_Usuario() {
         initComponents();
+        cargarDatosDelUsuario();
     }
-
+    private void cargarDatosDelUsuario() {
+        PerfilUsuarioEntity usuario = SesionUsuario.getUsuario();
+        if (usuario != null) {
+            txtResultadoNombrePerfil.setText(usuario.getNombre());
+            txtResultadoEmail.setText(usuario.getEmail());
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -35,7 +47,6 @@ public class Perfil_Usuario extends javax.swing.JFrame {
         jbtnGuardarPerfil = new javax.swing.JButton();
         jcbxUsuarioPerfil = new javax.swing.JComboBox<>();
         jbtnLimpiarPerfil = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
 
         jList1.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -239,14 +250,6 @@ public class Perfil_Usuario extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setText("REGISTRAR EMERGENCIA ");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -274,13 +277,12 @@ public class Perfil_Usuario extends javax.swing.JFrame {
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jbtnGuardarPerfil)
-                                .addGap(27, 27, 27)
-                                .addComponent(jbtnLimpiarPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton1))
-                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jbtnLimpiarPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)))))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -304,8 +306,7 @@ public class Perfil_Usuario extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jbtnLimpiarPerfil)
-                            .addComponent(jbtnGuardarPerfil)
-                            .addComponent(jButton1))
+                            .addComponent(jbtnGuardarPerfil))
                         .addGap(11, 11, 11))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -337,7 +338,7 @@ public class Perfil_Usuario extends javax.swing.JFrame {
     private void jbtnGuardarPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGuardarPerfilActionPerformed
       // Obtener datos del formulario
     String nombre = txtNombrePerfil.getText();
-    String nacimiento = txtNacimientoPerfil.getText();
+    String nacimientoTexto = txtNacimientoPerfil.getText();  // Se espera en formato yyyy-MM-dd
     String email = txtEmailPefil.getText();
     String contraseña = txtContraseñaPerfil.getText();
     String tipoUsuario = (String) jcbxUsuarioPerfil.getSelectedItem();
@@ -345,23 +346,31 @@ public class Perfil_Usuario extends javax.swing.JFrame {
     // Validar que la contraseña no esté vacía
     if (contraseña == null || contraseña.trim().isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, "Por favor, ingrese la contraseña antes de guardar.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;  // No continuar con el guardado
+        return;
     }
 
-    // Mostrar resultados en los campos de "resultado"
-    txtResultadoNombrePerfil.setText(nombre);
-    txtResultadoEmail.setText(email);
-    txtResultadoUsuarioPerfil.setText(tipoUsuario);
+    // Crear el servicio
+    perfilUsuarioService = new PerfilUsuarioService();
 
-    // Mensaje de confirmación
-    javax.swing.JOptionPane.showMessageDialog(this, "Datos del perfil guardados correctamente");
+    boolean guardado = perfilUsuarioService.registrarPerfil(nombre, nacimientoTexto, email, contraseña, tipoUsuario);
 
-    // Limpiar todos los campos del formulario después de guardar
-    txtNombrePerfil.setText("");
-    txtNacimientoPerfil.setText("");
-    txtEmailPefil.setText("");
-    txtContraseñaPerfil.setText("");
-    jcbxUsuarioPerfil.setSelectedIndex(0); 
+    if (guardado) {
+        // Mostrar resultados
+//        txtResultadoNombrePerfil.setText(nombre);
+//        txtResultadoEmail.setText(email);
+//        txtResultadoUsuarioPerfil.setText(tipoUsuario);
+
+        javax.swing.JOptionPane.showMessageDialog(this, "Datos del perfil guardados correctamente");
+
+        // Limpiar campos
+        txtNombrePerfil.setText("");
+        txtNacimientoPerfil.setText("");
+        txtEmailPefil.setText("");
+        txtContraseñaPerfil.setText("");
+        jcbxUsuarioPerfil.setSelectedIndex(0);
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar el perfil. Verifique los datos ingresados.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
 
     }//GEN-LAST:event_jbtnGuardarPerfilActionPerformed
 
@@ -406,12 +415,6 @@ public class Perfil_Usuario extends javax.swing.JFrame {
        this.dispose();
     }//GEN-LAST:event_btnIrSeguimientoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-     Registro_Emergencias ventanaEmergencia = new Registro_Emergencias(); // Crear instancia de la nueva ventana
-    ventanaEmergencia.setVisible(true); // Mostrar la nueva ventana
-    this.dispose(); // Cerrar la ventana actual
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -450,7 +453,6 @@ public class Perfil_Usuario extends javax.swing.JFrame {
     private javax.swing.JButton btnIrRegistrarEmergencia;
     private javax.swing.JButton btnIrReportes;
     private javax.swing.JButton btnIrSeguimiento;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;

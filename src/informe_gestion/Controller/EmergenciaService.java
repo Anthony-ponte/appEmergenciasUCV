@@ -1,9 +1,12 @@
 package informe_gestion.Controller;
 
+import informe_gestion.model.EmergenciaDetalleDTO;
 import informe_gestion.model.EmergenciaRepository;
 import informe_gestion.model.EmergenciaEntity;
+import java.sql.Date;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EmergenciaService {
     private EmergenciaRepository emergenciaRepository;
@@ -42,5 +45,14 @@ public class EmergenciaService {
 
     public EmergenciaEntity obtenerEmergenciaPorId(int id) {
         return emergenciaRepository.obtenerEmergenciaPorId(id);
+    }
+    
+    public EmergenciaDetalleDTO obtenerDetalleEmergencia(int idEmergencia) {
+        Optional<EmergenciaDetalleDTO> optional = emergenciaRepository.obtenerDetalleEmergenciaPorId(idEmergencia);
+        return optional.orElse(null);
+    }
+    
+     public List<EmergenciaDetalleDTO> obtenerEmergenciasPorFechas(Date fechaInicio, Date fechaFin) {
+        return emergenciaRepository.listarPorRangoFechas(fechaInicio, fechaFin);
     }
 }

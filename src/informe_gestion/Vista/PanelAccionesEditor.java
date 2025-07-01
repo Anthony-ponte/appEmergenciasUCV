@@ -28,9 +28,19 @@ class PanelAccionesEditor extends AbstractCellEditor implements TableCellEditor 
         JButton btnEliminar = new JButton("Eliminar");
         btnVer.addActionListener(e -> {
             int row = table.getSelectedRow();
-            Object id = table.getValueAt(row, 0);
-            JOptionPane.showMessageDialog(table, "Ver emergencia ID: " + id);
-            fireEditingStopped();
+            if (row >= 0) {
+                Object id = table.getValueAt(row, 0); // ID de la emergencia
+                if (id instanceof Integer) {
+                    int idEmergencia = (Integer) id;
+
+                    // Abre el formulario DetalleAtencion y le pasa el ID
+                    DetalleEmergencia detalle = new DetalleEmergencia(idEmergencia);
+                    detalle.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(table, "ID no válido");
+                }
+            }
+            fireEditingStopped(); // Finaliza la edición del botón en la tabla
         });
 
         btnEditar.addActionListener(e -> {
@@ -56,9 +66,6 @@ class PanelAccionesEditor extends AbstractCellEditor implements TableCellEditor 
                 return;
             }
 
-            DoctorService ds = new DoctorService();
-            // Obtener lista de doctores para el ComboBox
-            List<DoctorEntity> listaDoctores = ds.obtenerDoctores();
 
             // Crear instancia del formulario, pasar emergencia y lista de doctores
             AtencionService atencionService = new AtencionService();
@@ -137,6 +144,7 @@ class PanelAccionesEditor extends AbstractCellEditor implements TableCellEditor 
 
         panel.add(btnVer);
         panel.add(btnEditar);
+        panel.add(btnCancelar);
         panel.add(btnEliminar);
     }
 
