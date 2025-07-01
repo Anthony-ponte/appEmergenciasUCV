@@ -1,7 +1,6 @@
-package informe_gestion.Repository;
+package informe_gestion.model;
 
 import informe_gestion.config.ConexionMySQL;
-import informe_gestion.model.DoctorEntity;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

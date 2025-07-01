@@ -1,14 +1,11 @@
 package informe_gestion.Vista;
 
-import informe_gestion.Dto.EmergenciaDto;
-import informe_gestion.Repository.EmergenciaRepository;
-import informe_gestion.Repository.TipoEmergenciaRepository;
-import informe_gestion.Service.EmergenciaService;
-import informe_gestion.Service.TipoEmergenciaService;
+import informe_gestion.Controller.EmergenciaDto;
+import informe_gestion.Controller.EmergenciaService;
+import informe_gestion.Controller.TipoEmergenciaService;
 import informe_gestion.model.TipoEmergenciaEntity;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 

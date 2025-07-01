@@ -7,19 +7,19 @@ public class EmergenciaEntity {
     private String ubicacion;
     private String descripcion;
     private String fechaRegistro;
-    private boolean activo;
+    private int estado;
 
     public EmergenciaEntity() {
     }
 
-    public EmergenciaEntity(int id_emergencia, String nombre_apellidos, int tipo_emergencia, String ubicacion, String descripcion, String fechaRegistro, boolean activo) {
+    public EmergenciaEntity(int id_emergencia, String nombre_apellidos, int tipo_emergencia, String ubicacion, String descripcion, String fechaRegistro, int estado) {
         this.id_emergencia = id_emergencia;
         this.nombre_apellidos = nombre_apellidos;
         this.tipo_emergencia = tipo_emergencia;
         this.ubicacion = ubicacion;
         this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
-        this.activo = activo;
+        this.estado = estado;
     }
 
     public int getId_emergencia() {
@@ -62,12 +62,12 @@ public class EmergenciaEntity {
         this.descripcion = descripcion;
     }
 
-    public boolean isActivo() {
-        return activo;
+    public int getEstado() {
+        return estado;
     }
 
-    public void setActivo(boolean activo) {
-        this.activo = activo;
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 
     public String getFechaRegistro() {

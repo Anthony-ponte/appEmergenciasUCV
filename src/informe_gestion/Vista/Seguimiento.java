@@ -1,12 +1,16 @@
 
 package informe_gestion.Vista;
 
-import informe_gestion.Service.DoctorService;
-import informe_gestion.Service.EmergenciaService;
+import informe_gestion.Controller.DoctorService;
+import informe_gestion.Controller.EmergenciaService;
 import informe_gestion.model.DoctorEntity;
 import informe_gestion.model.EmergenciaEntity;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.util.List;
 
 public class Seguimiento extends javax.swing.JFrame {
@@ -46,21 +50,79 @@ public class Seguimiento extends javax.swing.JFrame {
     private void cargarTablaEmergencias() {
         List<EmergenciaEntity> lista = emergenciaService.obtenerEmergencias();
 
-        String[] columnas = {"ID", "Tipo", "Ubicación", "Descripción"};
-        DefaultTableModel modelo = new DefaultTableModel(null, columnas);
-
+        String[] columnas = {"ID", "Tipo", "Ubicación", "Descripción","Estado","Acciones"};
+        DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 5; // Solo la columna "Acciones" es editable
+            }
+        };
         for (EmergenciaEntity e : lista) {
+            String estadoTexto;
+            switch (e.getEstado()) {
+                case 1 -> estadoTexto = "Pendiente";
+                case 2 -> estadoTexto = "Atendido";
+                case 3 -> estadoTexto = "Cancelado";
+                default -> estadoTexto = "Desconocido";
+            }
+
             Object[] fila = {
                     e.getId_emergencia(),
                     e.getTipo_emergencia(),
                     e.getUbicacion(),
-                    e.getDescripcion()
+                    e.getDescripcion(),
+                    estadoTexto,
+                    "Acciones"
             };
             modelo.addRow(fila);
         }
 
         jbtlDatosSeguimiento.setModel(modelo);
+        jbtlDatosSeguimiento.getColumn("Acciones").setCellRenderer(new PanelAccionesRenderer());
+        jbtlDatosSeguimiento.getColumn("Acciones").setCellEditor(new PanelAccionesEditor(jbtlDatosSeguimiento));
+        ajustarAlturaFilas(jbtlDatosSeguimiento);
+        ajustarAnchoColumnas(jbtlDatosSeguimiento);
+
+
     }
+    private void ajustarAlturaFilas(JTable tabla) {
+        for (int row = 0; row < tabla.getRowCount(); row++) {
+            int maxHeight = tabla.getRowHeight();
+
+            for (int column = 0; column < tabla.getColumnCount(); column++) {
+                TableCellRenderer cellRenderer = tabla.getCellRenderer(row, column);
+                Component comp = tabla.prepareRenderer(cellRenderer, row, column);
+                int height = comp.getPreferredSize().height;
+                maxHeight = Math.max(maxHeight, height);
+            }
+
+            tabla.setRowHeight(row, maxHeight);
+        }
+    }
+
+    private void ajustarAnchoColumnas(JTable tabla) {
+        for (int col = 0; col < tabla.getColumnCount(); col++) {
+            TableColumn columna = tabla.getColumnModel().getColumn(col);
+            int anchoMaximo = 0;
+
+            // Ver tamaño del header
+            TableCellRenderer headerRenderer = tabla.getTableHeader().getDefaultRenderer();
+            Component headerComp = headerRenderer.getTableCellRendererComponent(tabla, columna.getHeaderValue(), false, false, 0, col);
+            anchoMaximo = headerComp.getPreferredSize().width;
+
+            // Ver tamaño de las celdas
+            for (int row = 0; row < tabla.getRowCount(); row++) {
+                TableCellRenderer cellRenderer = tabla.getCellRenderer(row, col);
+                Component c = tabla.prepareRenderer(cellRenderer, row, col);
+                int anchoCelda = c.getPreferredSize().width;
+                anchoMaximo = Math.max(anchoMaximo, anchoCelda);
+            }
+
+            // Añade un pequeño margen
+            columna.setPreferredWidth(anchoMaximo + 10);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -158,13 +220,10 @@ public class Seguimiento extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(9, 9, 9)
                                 .addComponent(jLabel2)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 510, Short.MAX_VALUE)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 725, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(36, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -176,7 +235,10 @@ public class Seguimiento extends javax.swing.JFrame {
                         .addComponent(jButton3)
                         .addGap(80, 80, 80)
                         .addComponent(btnIrReportesSegumiento)
-                        .addGap(62, 62, 62))))
+                        .addGap(62, 62, 62))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

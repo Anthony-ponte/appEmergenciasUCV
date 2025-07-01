@@ -90,15 +90,6 @@ public class DoctorEntity {
 
     @Override
     public String toString() {
-        return "DoctorEntity{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", apellido='" + apellido + '\'' +
-                ", especialidad='" + especialidad + '\'' +
-                ", codigoDoctor='" + codigoDoctor + '\'' +
-                ", correo='" + correo + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", activo=" + activo +
-                '}';
+        return this.nombre;
     }
 }

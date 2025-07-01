@@ -1,11 +1,8 @@
-package informe_gestion.Service;
+package informe_gestion.Controller;
 
-import informe_gestion.Dto.EmergenciaDto;
-import informe_gestion.Repository.EmergenciaRepository;
+import informe_gestion.model.EmergenciaRepository;
 import informe_gestion.model.EmergenciaEntity;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EmergenciaService {
@@ -26,5 +23,24 @@ public class EmergenciaService {
     }
     public List<EmergenciaEntity> obtenerEmergencias() {
         return emergenciaRepository.listarEmergencias();
+    }
+    public void eliminarEmergenciaPorId(Long id) {
+        if (!emergenciaRepository.existePorId(id)) {
+            throw new IllegalArgumentException("No se encontró la emergencia con ID: " + id);
+        }
+
+        emergenciaRepository.eliminarPorId(id);
+    }
+
+    public void CancelarEmergenciaPorId( Long id) {
+        if (!emergenciaRepository.existePorId(id)) {
+            throw new IllegalArgumentException("No se encontró la emergencia con ID: " + id);
+        }
+
+        emergenciaRepository.CancelarPorId(id);
+    }
+
+    public EmergenciaEntity obtenerEmergenciaPorId(int id) {
+        return emergenciaRepository.obtenerEmergenciaPorId(id);
     }
 }

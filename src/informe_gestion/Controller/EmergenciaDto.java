@@ -1,4 +1,4 @@
-package informe_gestion.Dto;
+package informe_gestion.Controller;
 
 public class EmergenciaDto {
 

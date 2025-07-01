@@ -1,6 +1,6 @@
-package informe_gestion.Service;
+package informe_gestion.Controller;
 
-import informe_gestion.Repository.DoctorRepository;
+import informe_gestion.model.DoctorRepository;
 import informe_gestion.model.DoctorEntity;
 
 import java.sql.SQLException;
